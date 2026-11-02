@@ -2,6 +2,7 @@ export const me = {
   name: 'Krisna Aditya Satria Anugerah',
   email: 'krisna.adstr@gmail.com',
   github: 'https://github.com/Joeyzeeee',
+  linkedin: 'https://www.linkedin.com/in/krisna-aditya-5318a9446/',
 }
 
 // TAMBAH PROYEK: salin satu blok { ... } lalu ganti isinya
