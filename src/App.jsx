@@ -124,7 +124,7 @@ export default function App() {
         .to(o, { v: 100, duration: 1.6, ease: 'power2.inOut', onUpdate: () => { cnt.textContent = Math.round(o.v) } })
         .to('.pre', { yPercent: -100, duration: 0.9, ease: 'power4.inOut' })
         .from('.hero .ch', { yPercent: 115, duration: 1.1, stagger: 0.07, ease: 'power4.out' }, '-=0.35')
-        .from('.hello, .hero .btn, .top', { opacity: 0, y: 24, duration: 0.9, stagger: 0.08 }, '-=0.7')
+        .from('.hello, .hero .btns, .top', { opacity: 0, y: 24, duration: 0.9, stagger: 0.08 }, '-=0.7')
         .add(() => lenis.start())
 
       // 2. hero: nama terbelah ke kiri dan kanan saat discroll
@@ -138,13 +138,6 @@ export default function App() {
         scrollTrigger: { trigger: '.hero', start: '30% top', end: 'bottom top', scrub: true }
       })
 
-      // 3. teks berjalan miring mengikuti kecepatan scroll
-      ScrollTrigger.create({
-        onUpdate: (s) => {
-          const v = gsap.utils.clamp(-12, 12, -s.getVelocity() / 250)
-          gsap.fromTo('.marq', { skewX: v }, { skewX: 0, duration: 0.6, ease: 'power3.out', overwrite: true })
-        }
-      })
 
       // 4. judul besar menyala kata per kata
       gsap.utils.toArray('.scrub').forEach((h) => {
@@ -245,7 +238,6 @@ export default function App() {
     return () => { if (raf) gsap.ticker.remove(raf); if (lenis) lenis.destroy(); window.__lenis = null; ctx.revert() }
   }, [force])
 
-  const words = ['Kepemimpinan', 'Pengembangan', 'Jaringan', 'Fotografi']
 
   return (
     <div ref={root}>
@@ -269,26 +261,63 @@ export default function App() {
         <p className="hello">Malang, Indonesia</p>
         <h1 aria-label="Krisna Aditya"><Split text="Krisna" /><Split text="Aditya" /></h1>
         <div className="role">
-          <p><strong>Project Leader &amp; Developer</strong>Mahasiswa Sistem Informasi Bisnis, Politeknik Negeri Malang. Memimpin tim proyek dan membangun aplikasi web dan mobile.</p>
+          <p><strong>Project Leader &amp; Developer</strong>Software Engineering Student, Politeknik Negeri Malang.</p>
           <div className="btns">
-            <a className="btn fill" href="#proyek" onClick={go}>Lihat proyek</a>
-            <a className="btn" href="#kontak" onClick={go}>Hubungi saya</a>
+            <a className="btn fill" href="#proyek" onClick={go}>
+              Lihat Proyek
+            </a>
+            <a
+              className="btn btn-glass"
+              href="https://drive.google.com/file/d/1vwRKkF9bYfS5kUDMYrhVttWz7kuKJwS8/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Lihat CV
+              <svg className="btn-ext" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+            <div className="btns-social">
+              <a
+                className="btn-icon"
+                href={me.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                title="GitHub"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                </svg>
+              </a>
+              <a
+                className="btn-icon"
+                href={me.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                title="LinkedIn"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.77v8.37H6.46v-8.37M7.85 6.45a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="marq" aria-hidden="true">
-        <div>{[...words, ...words, ...words, ...words].map((w, i) => <span key={i}>{w}</span>)}</div>
-      </div>
 
       <main>
         <div className="wrap">
           <section id="tentang">
-            <p className="sec rv">Tentang</p>
+            <p className="sec rv">Tentang Saya</p>
             <Big
               parts={[
                 { t: 'Halo... saya Krisna', em: true, breakAfter: true },
-                { t: 'Mahasiswa Sistem Informasi Polinema.' },
+                { t: 'Software Engineering Student' },
               ]}
             />
             <div className="about-grid">
@@ -332,19 +361,16 @@ export default function App() {
 
               <div className="about-narrative rv">
                 <p>
-                  Beberapa proyek yang pernah saya kerjakan antara lain{' '}
-                  <a href="#proyek" onClick={go} className="about-link">SIFORA</a>
-                  , sistem peminjaman fasilitas kampus, di mana saya memimpin tim, membagi tugas, mengatur jadwal, dan memantau progres. Saya juga mengembangkan sisi mobile{' '}
-                  <a href="#proyek" onClick={go} className="about-link">Kompenify</a>
-                  , aplikasi untuk mengelola kompen mahasiswa, serta ikut menyusun dokumen SKPL dan melakukan pengujian usability menggunakan SUS.
+                  Saya mahasiswa Sistem Informasi di Polinema dengan latar belakang di bidang software development dan system analysis.
                 </p>
                 <p>
-                  Saya memulai perjalanan di bidang teknologi dari SMK Negeri 1 Blitar jurusan Teknik Komputer dan Jaringan, lalu mendapat pengalaman PKL di Diskominfo Kota Blitar. Di luar teknologi, saya juga bekerja freelance sebagai fotografer dan editor foto sejak 2022.
+                  Perjalanan saya di dunia teknologi dimulai dari jurusan TKJ di SMKN 1 Blitar dan berlanjut ke berbagai proyek nyata, mulai dari memimpin pengembangan sistem peminjaman fasilitas kampus (<a href="#proyek" onClick={go} className="about-link">SIFORA</a>) hingga membangun aplikasi mobile pengelolaan kompensasi mahasiswa (<a href="#proyek" onClick={go} className="about-link">Kompenify</a>). Saya terbiasa menangani siklus pengembangan perangkat lunak secara menyeluruh, mulai dari perancangan arsitektur, penyusunan dokumen SKPL, implementasi code, hingga pengujian usability.
                 </p>
                 <p>
-                  Kalau Anda sedang mencari mahasiswa magang atau developer junior yang siap belajar, berkontribusi, dan bekerja sama dalam tim, silakan{' '}
-                  <a href="#kontak" onClick={go} className="about-link">hubungi saya</a>
-                  .
+                  Selain rekayasa perangkat lunak, pengalaman freelance sebagai fotografer dan editor foto sejak 2022 mengasah kepekaan visual dan ketelitian saya terhadap detail.
+                </p>
+                <p>
+                  Currently open for internship and Junior Developer opportunities. <a href="#kontak" onClick={go} className="about-link">Let’s connect</a> and explore how we can collaborate.
                 </p>
               </div>
             </div>
