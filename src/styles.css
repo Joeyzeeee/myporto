@@ -707,7 +707,7 @@ footer {
   border: 1.5px solid var(--teal);
   border-radius: 50%;
   pointer-events: none;
-  z-index: 50;
+  z-index: 90;
   opacity: 0;
   transition: width .3s, height .3s, margin .3s, background .3s, opacity .3s
 }
@@ -871,7 +871,7 @@ html.lenis body {
   gap: 7vw;
   width: max-content;
   height: 100svh;
-  padding: 0 9vw 0 max(28px, calc((100vw - 1180px)/2 + 28px))
+  padding: 0 max(14vw, calc((100vw - 1180px)/2 + 120px)) 0 max(28px, calc((100vw - 1180px)/2 + 28px));
 }
 
 .hz-panel {
@@ -1288,5 +1288,298 @@ html.lenis body {
   :root:not(.force) .about-chip-bottom,
   :root:not(.force) .chip-dot {
     animation: none;
+  }
+
+  :root:not(.force) .pdetail-page,
+  :root:not(.force) .pdetail-anim {
+    transition: none !important;
+  }
+}
+
+/* ===== Aksi Card Proyek ===== */
+.hz-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+button.btn {
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: inherit;
+}
+
+/* ===== Halaman Detail Proyek (Editorial Minimalist - No Boxes) ===== */
+.pdetail-page {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  background: var(--bg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  color: var(--text);
+  font-family: var(--bf);
+  outline: none;
+}
+
+.pdetail-page::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pdetail-page::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+.pdetail-page::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+}
+
+.pdetail-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* Navigasi Atas */
+.pdetail-nav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: rgba(6, 9, 13, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(22, 33, 43, 0.6);
+}
+
+.pdetail-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.pdetail-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--bf);
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.pdetail-back-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.pdetail-back-btn:hover {
+  color: var(--head);
+}
+
+.pdetail-back-btn:hover svg {
+  transform: translateX(-3px);
+}
+
+.pdetail-nav-github {
+  font-family: var(--hf);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--teal);
+  transition: opacity 0.2s;
+}
+
+.pdetail-nav-github:hover {
+  opacity: 0.8;
+}
+
+/* Konten Utama Editorial */
+.pdetail-content {
+  padding-top: clamp(60px, 8vw, 100px);
+  padding-bottom: clamp(60px, 8vw, 100px);
+}
+
+.pdetail-header {
+  margin-bottom: clamp(40px, 6vw, 60px);
+}
+
+.pdetail-kicker {
+  display: block;
+  font-family: var(--hf);
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.pdetail-title {
+  font-family: var(--hf);
+  font-weight: 800;
+  font-size: clamp(2.8rem, 6.5vw, 4.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--head);
+  margin-bottom: 24px;
+}
+
+.pdetail-statement {
+  font-family: var(--sf);
+  font-style: italic;
+  font-size: clamp(1.8rem, 4.2vw, 3rem);
+  line-height: 1.25;
+  color: var(--head);
+  max-width: 28ch;
+  margin: 0;
+}
+
+/* 1. Tentang Aplikasi */
+.pdetail-section {
+  padding-top: clamp(32px, 5vw, 48px);
+  padding-bottom: clamp(40px, 6vw, 56px);
+  border-top: 1px solid var(--line);
+}
+
+.pdetail-col-label {
+  display: block;
+  font-family: var(--hf);
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.pdetail-about-lead {
+  font-size: clamp(1.1rem, 2vw, 1.28rem);
+  line-height: 1.8;
+  color: var(--head);
+  max-width: 68ch;
+  margin-bottom: 14px;
+}
+
+.pdetail-about-sub {
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--text);
+  max-width: 68ch;
+  margin: 0;
+}
+
+/* 2, 3, 4. Kolom (Bagian yang Saya Kerjakan, Tech Stack, GitHub) */
+.pdetail-columns {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: clamp(32px, 5vw, 56px);
+  padding-top: clamp(36px, 5vw, 52px);
+  border-top: 1px solid var(--line);
+}
+
+.pdetail-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdetail-role-title {
+  font-family: var(--hf);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--head);
+  margin-bottom: 14px;
+}
+
+.pdetail-role-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.pdetail-role-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.96rem;
+  line-height: 1.68;
+  color: var(--text);
+}
+
+.pdetail-role-dash {
+  color: var(--teal);
+  flex-shrink: 0;
+}
+
+.pdetail-stack-text {
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--head);
+  margin: 0;
+}
+
+.pdetail-github-link {
+  font-family: var(--hf);
+  font-size: 1.04rem;
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.pdetail-github-link:hover {
+  transform: translateX(3px);
+  text-decoration: underline;
+}
+
+/* Bottom Button */
+.pdetail-bottom {
+  margin-top: clamp(56px, 8vw, 84px);
+  padding-top: 36px;
+  border-top: 1px solid var(--line);
+}
+
+.pdetail-back-bottom-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--bf);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.pdetail-back-bottom-btn:hover {
+  color: var(--head);
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .pdetail-columns {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pdetail-wrap {
+    padding: 0 20px;
+  }
+
+  .pdetail-statement {
+    font-size: 1.6rem;
   }
 }

@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
@@ -72,12 +73,227 @@ const go = (e) => {
   }
 }
 
+function ProjectDetailPage({ project, onBack, isReduced }) {
+  const pageRef = useRef(null)
+  const detail = project?.detail
+  if (!detail) return null
+
+  // Scroll ke paling atas saat halaman studi kasus terbuka
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    if (pageRef.current) {
+      pageRef.current.scrollTop = 0
+    }
+  }, [project])
+
+  // Animasi masuk halus untuk elemen-elemen halaman
+  useEffect(() => {
+    if (isReduced) return
+    const el = pageRef.current
+    if (!el) return
+
+    gsap.fromTo(
+      el.querySelectorAll('.pdetail-anim'),
+      { opacity: 0, y: 22 },
+      { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' }
+    )
+  }, [isReduced, project])
+
+  // Daftarkan link & tombol di halaman detail ke efek kursor .cur
+  useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    const cur = document.querySelector('.cur')
+    if (!cur) return
+
+    const interactive = pageRef.current?.querySelectorAll('a, button, .pdetail-github-link')
+    if (!interactive) return
+
+    const onEnter = () => cur.classList.add('big')
+    const onLeave = () => cur.classList.remove('big')
+
+    interactive.forEach((item) => {
+      item.addEventListener('pointerenter', onEnter)
+      item.addEventListener('pointerleave', onLeave)
+    })
+
+    return () => {
+      cur.classList.remove('big')
+      interactive.forEach((item) => {
+        item.removeEventListener('pointerenter', onEnter)
+        item.removeEventListener('pointerleave', onLeave)
+      })
+    }
+  }, [project])
+
+  // Tombol Escape untuk kembali
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onBack()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onBack])
+
+  return (
+    <div className="pdetail-page" ref={pageRef} tabIndex={-1} data-lenis-prevent="true">
+      {/* Top Bar Navigation */}
+      <nav className="pdetail-nav">
+        <div className="pdetail-wrap pdetail-nav-inner">
+          <button type="button" className="pdetail-back-btn" onClick={onBack} aria-label="Kembali ke Portofolio">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            <span>Kembali ke Portofolio</span>
+          </button>
+          <a
+            className="pdetail-nav-github"
+            href={detail.links?.github || project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub ↗
+          </a>
+        </div>
+      </nav>
+
+      <article className="pdetail-wrap pdetail-content">
+        {/* Header / Judul & Statement Editorial */}
+        <header className="pdetail-header pdetail-anim">
+          <span className="pdetail-kicker">{project.tag} · {project.year}</span>
+          <h1 className="pdetail-title">{project.title}</h1>
+        </header>
+
+        {/* 1. Aplikasi Ini Tentang Apa */}
+        <section className="pdetail-section pdetail-anim">
+          <span className="pdetail-col-label">TENTANG APLIKASI</span>
+          <p className="pdetail-about-lead">
+            {detail.about}
+          </p>
+          <p className="pdetail-about-sub">
+            {detail.problem}
+          </p>
+        </section>
+
+        {/* 2, 3, 4. Bagian yang Saya Kerjakan, Tech Stack, GitHub (Editorial Columns Tanpa Kotak) */}
+        <div className="pdetail-columns pdetail-anim">
+          {/* Kolom 1: Saya Mengerjakan Bagian Apa */}
+          <div className="pdetail-col pdetail-col-role">
+            <span className="pdetail-col-label">BAGIAN YANG SAYA KERJAKAN</span>
+            <p className="pdetail-role-title">{detail.role?.badge}</p>
+            <ul className="pdetail-role-list">
+              {detail.role?.items?.map((item, idx) => (
+                <li key={idx}>
+                  <span className="pdetail-role-dash" aria-hidden="true">—</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Kolom 2: Tech Stack */}
+          <div className="pdetail-col pdetail-col-stack">
+            <span className="pdetail-col-label">TECH STACK</span>
+            <p className="pdetail-stack-text">
+              {detail.stack?.join(', ')}
+            </p>
+          </div>
+
+          {/* Kolom 3: GitHub */}
+          <div className="pdetail-col pdetail-col-github">
+            <span className="pdetail-col-label">REPOSITORI</span>
+            <a
+              className="pdetail-github-link"
+              href={detail.links?.github || project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              github.com/Joeyzeeee ↗
+            </a>
+          </div>
+        </div>
+
+        {/* Bottom Return Button */}
+        <div className="pdetail-bottom pdetail-anim">
+          <button type="button" className="pdetail-back-bottom-btn" onClick={onBack}>
+            ← Kembali ke Portofolio
+          </button>
+        </div>
+      </article>
+    </div>
+  )
+}
+
 export default function App() {
   const root = useRef(null)
   const photoRef = useRef(null)
+  const openerRef = useRef(null)
+  const [selectedProject, setSelectedProject] = useState(null)
   const [force, setForce] = useState(false)
   const [imgError, setImgError] = useState(false)
   const reduced = false
+
+  const handleOpenDetail = (p, openerEl) => {
+    openerRef.current = openerEl || document.activeElement
+    setSelectedProject(p)
+    if (window.__lenis) {
+      window.__lenis.stop()
+    }
+    const slug = p.title.toLowerCase().replace(/\s+/g, '-')
+    if (window.location.hash !== `#/proyek/${slug}`) {
+      window.history.pushState({ project: slug }, '', `#/proyek/${slug}`)
+    }
+  }
+
+  const handleBack = () => {
+    setSelectedProject(null)
+    if (window.__lenis) {
+      window.__lenis.start()
+    }
+    if (window.location.hash.startsWith('#/proyek/')) {
+      window.history.pushState(null, '', '#proyek')
+    }
+    setTimeout(() => {
+      try {
+        openerRef.current?.focus?.({ preventScroll: true })
+      } catch {
+        openerRef.current?.focus?.()
+      }
+      const hz = document.querySelector('.hz')
+      if (hz && hz.scrollLeft !== 0) hz.scrollLeft = 0
+    }, 60)
+  }
+
+  // Sinkronisasi navigasi URL hash (tombol back/forward browser & direct link)
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash
+      if (hash.startsWith('#/proyek/')) {
+        const slug = hash.replace('#/proyek/', '').toLowerCase()
+        const found = projects.find(
+          (p) => p.detail && p.title.toLowerCase().replace(/\s+/g, '-') === slug
+        )
+        if (found) {
+          setSelectedProject(found)
+          window.__lenis?.stop()
+        }
+      } else {
+        setSelectedProject(null)
+        window.__lenis?.start()
+      }
+    }
+
+    handleHash()
+    window.addEventListener('hashchange', handleHash)
+    window.addEventListener('popstate', handleHash)
+    return () => {
+      window.removeEventListener('hashchange', handleHash)
+      window.removeEventListener('popstate', handleHash)
+    }
+  }, [])
   const photoSrc = import.meta.env.BASE_URL + 'foto.jpg'
   const turnOn = () => { document.documentElement.classList.add('force'); window.scrollTo(0, 0); setForce(true) }
 
@@ -213,6 +429,20 @@ export default function App() {
       })
       gsap.to('.hz-bar i', { scaleX: 1, ease: 'none', scrollTrigger: { ...st, scrub: true } })
 
+      // Mendukung scroll horizontal natural dengan trackpad (swipe 2 jari kiri/kanan) atau Shift+Wheel
+      const hzEl = document.querySelector('.hz')
+      const handleHzWheel = (e) => {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          e.preventDefault()
+          if (lenis) {
+            lenis.scrollTo(lenis.scroll + e.deltaX * 1.4, { immediate: true })
+          } else {
+            window.scrollBy({ top: e.deltaX * 1.4 })
+          }
+        }
+      }
+      hzEl?.addEventListener('wheel', handleHzWheel, { passive: false })
+
       // 6. elemen lain muncul dari bawah
       gsap.utils.toArray('.rv').forEach((el) =>
         gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } }))
@@ -235,7 +465,13 @@ export default function App() {
       document.fonts.ready.then(() => ScrollTrigger.refresh())
     }, root)
 
-    return () => { if (raf) gsap.ticker.remove(raf); if (lenis) lenis.destroy(); window.__lenis = null; ctx.revert() }
+    return () => {
+      hzEl?.removeEventListener('wheel', handleHzWheel)
+      if (raf) gsap.ticker.remove(raf)
+      if (lenis) lenis.destroy()
+      window.__lenis = null
+      ctx.revert()
+    }
   }, [force])
 
 
@@ -391,7 +627,20 @@ export default function App() {
                 <p className="tag">{p.tag} · {p.year}</p>
                 <p className="desc">{p.desc}</p>
                 <ul className="pills">{p.stack.map((s) => <li key={s}>{s}</li>)}</ul>
-                <a className="btn fill" href={p.link}>Lihat di GitHub ↗</a>
+                <div className="hz-actions">
+                  <a className="btn fill" href={p.link} target="_blank" rel="noopener noreferrer">
+                    Lihat di GitHub ↗
+                  </a>
+                  {p.detail && (
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={(e) => handleOpenDetail(p, e.currentTarget)}
+                    >
+                      Click for detail
+                    </button>
+                  )}
+                </div>
               </article>
             ))}
             <div className="hz-panel intro">
@@ -435,6 +684,16 @@ export default function App() {
         <span>© 2026 {me.name}</span>
         <span>Malang, Indonesia</span>
       </footer>
+
+      {selectedProject &&
+        createPortal(
+          <ProjectDetailPage
+            project={selectedProject}
+            onBack={handleBack}
+            isReduced={reduced && !force}
+          />,
+          document.body
+        )}
     </div>
   )
 }
