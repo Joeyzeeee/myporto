@@ -165,56 +165,98 @@ function ProjectDetailPage({ project, onBack, isReduced }) {
         <header className="pdetail-header pdetail-anim">
           <span className="pdetail-kicker">{project.tag} · {project.year}</span>
           <h1 className="pdetail-title">{project.title}</h1>
+          <p className="pdetail-statement">
+            {detail.isComingSoon ? (
+              <>Coming Soon <em>(In Progress)</em></>
+            ) : (
+              detail.statement || 'Aplikasi mobile untuk mendigitalkan proses kompensasi mahasiswa di Politeknik Negeri Malang.'
+            )}
+          </p>
         </header>
 
-        {/* 1. Aplikasi Ini Tentang Apa */}
-        <section className="pdetail-section pdetail-anim">
-          <span className="pdetail-col-label">TENTANG APLIKASI</span>
-          <p className="pdetail-about-lead">
-            {detail.about}
-          </p>
-          <p className="pdetail-about-sub">
-            {detail.problem}
-          </p>
-        </section>
-
-        {/* 2, 3, 4. Bagian yang Saya Kerjakan, Tech Stack, GitHub (Editorial Columns Tanpa Kotak) */}
-        <div className="pdetail-columns pdetail-anim">
-          {/* Kolom 1: Saya Mengerjakan Bagian Apa */}
-          <div className="pdetail-col pdetail-col-role">
-            <span className="pdetail-col-label">BAGIAN YANG SAYA KERJAKAN</span>
-            <p className="pdetail-role-title">{detail.role?.badge}</p>
-            <ul className="pdetail-role-list">
-              {detail.role?.items?.map((item, idx) => (
-                <li key={idx}>
-                  <span className="pdetail-role-dash" aria-hidden="true">—</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Kolom 2: Tech Stack */}
-          <div className="pdetail-col pdetail-col-stack">
-            <span className="pdetail-col-label">TECH STACK</span>
-            <p className="pdetail-stack-text">
-              {detail.stack?.join(', ')}
+        {detail.isComingSoon ? (
+          <section className="pdetail-section pdetail-anim">
+            <span className="pdetail-col-label">STATUS DOKUMENTASI</span>
+            <p className="pdetail-about-lead">
+              Studi kasus dan dokumentasi teknis mendalam untuk proyek <strong>{project.title}</strong> sedang dalam tahap penyusunan.
             </p>
-          </div>
+            <p className="pdetail-about-sub">
+              {project.desc}
+            </p>
+            <div className="pdetail-columns" style={{ marginTop: '40px' }}>
+              <div className="pdetail-col">
+                <span className="pdetail-col-label">PERAN</span>
+                <p className="pdetail-stack-text">{project.tag}</p>
+              </div>
+              <div className="pdetail-col">
+                <span className="pdetail-col-label">TECH STACK</span>
+                <p className="pdetail-stack-text">{project.stack?.join(', ')}</p>
+              </div>
+              <div className="pdetail-col">
+                <span className="pdetail-col-label">REPOSITORI</span>
+                <a
+                  className="pdetail-github-link"
+                  href={detail.links?.github || project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  github.com/Joeyzeeee ↗
+                </a>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <>
+            {/* 1. Aplikasi Ini Tentang Apa */}
+            <section className="pdetail-section pdetail-anim">
+              <span className="pdetail-col-label">TENTANG APLIKASI</span>
+              <p className="pdetail-about-lead">
+                {detail.about}
+              </p>
+              <p className="pdetail-about-sub">
+                {detail.problem}
+              </p>
+            </section>
 
-          {/* Kolom 3: GitHub */}
-          <div className="pdetail-col pdetail-col-github">
-            <span className="pdetail-col-label">REPOSITORI</span>
-            <a
-              className="pdetail-github-link"
-              href={detail.links?.github || project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              github.com/Joeyzeeee ↗
-            </a>
-          </div>
-        </div>
+            {/* 2, 3, 4. Bagian yang Saya Kerjakan, Tech Stack, GitHub (Editorial Columns Tanpa Kotak) */}
+            <div className="pdetail-columns pdetail-anim">
+              {/* Kolom 1: Saya Mengerjakan Bagian Apa */}
+              <div className="pdetail-col pdetail-col-role">
+                <span className="pdetail-col-label">BAGIAN YANG SAYA KERJAKAN</span>
+                <p className="pdetail-role-title">{detail.role?.badge}</p>
+                <ul className="pdetail-role-list">
+                  {detail.role?.items?.map((item, idx) => (
+                    <li key={idx}>
+                      <span className="pdetail-role-dash" aria-hidden="true">—</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Kolom 2: Tech Stack */}
+              <div className="pdetail-col pdetail-col-stack">
+                <span className="pdetail-col-label">TECH STACK</span>
+                <p className="pdetail-stack-text">
+                  {detail.stack?.join(', ')}
+                </p>
+              </div>
+
+              {/* Kolom 3: GitHub */}
+              <div className="pdetail-col pdetail-col-github">
+                <span className="pdetail-col-label">REPOSITORI</span>
+                <a
+                  className="pdetail-github-link"
+                  href={detail.links?.github || project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  github.com/Joeyzeeee ↗
+                </a>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Bottom Return Button */}
         <div className="pdetail-bottom pdetail-anim">
@@ -617,7 +659,7 @@ export default function App() {
           <div className="hz-track">
             <div className="hz-panel intro">
               <p className="sec">Proyek</p>
-              <h2 className="big">Dua proyek yang saya <em>pimpin</em> dan kerjakan.</h2>
+              <h2 className="big">Beberapa <em>proyek</em> yang saya kerjakan.</h2>
               <p className="hint">Scroll untuk melihat →</p>
             </div>
             {projects.map((p) => (
