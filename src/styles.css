@@ -1365,7 +1365,7 @@ button.btn {
 .pdetail-back-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: transparent;
   border: none;
   color: var(--muted);
@@ -1373,20 +1373,45 @@ button.btn {
   font-size: 0.92rem;
   font-weight: 500;
   cursor: pointer;
-  padding: 0;
-  transition: color 0.2s ease;
+  padding: 8px 0;
+  transition: color 0.25s ease;
+  user-select: none;
 }
 
-.pdetail-back-btn svg {
-  transition: transform 0.2s ease;
+.pdetail-back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease, filter 0.25s ease;
+  flex-shrink: 0;
+}
+
+.pdetail-back-icon svg {
+  display: block;
+}
+
+.pdetail-back-text {
+  transition: color 0.25s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pdetail-back-btn:hover {
   color: var(--head);
 }
 
-.pdetail-back-btn:hover svg {
-  transform: translateX(-3px);
+.pdetail-back-btn:hover .pdetail-back-icon {
+  color: var(--teal);
+  transform: translateX(-5px);
+  filter: drop-shadow(0 0 6px rgba(46, 201, 210, 0.5));
+}
+
+.pdetail-back-btn:hover .pdetail-back-text {
+  color: var(--head);
+  transform: translateX(-2px);
+}
+
+.pdetail-back-btn:active {
+  transform: scale(0.97);
 }
 
 .pdetail-nav-github {
@@ -1552,18 +1577,51 @@ button.btn {
 }
 
 .pdetail-back-bottom-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   background: transparent;
   border: none;
   color: var(--muted);
   font-family: var(--bf);
-  font-size: 0.95rem;
+  font-size: 0.94rem;
+  font-weight: 500;
   cursor: pointer;
-  padding: 0;
-  transition: color 0.2s ease;
+  padding: 8px 0;
+  transition: color 0.25s ease;
+  user-select: none;
+}
+
+.pdetail-back-bottom-btn .pdetail-back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease, filter 0.25s ease;
+  flex-shrink: 0;
+}
+
+.pdetail-back-bottom-btn span:last-child {
+  transition: color 0.25s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pdetail-back-bottom-btn:hover {
   color: var(--head);
+}
+
+.pdetail-back-bottom-btn:hover .pdetail-back-icon {
+  color: var(--teal);
+  transform: translateX(-5px);
+  filter: drop-shadow(0 0 6px rgba(46, 201, 210, 0.5));
+}
+
+.pdetail-back-bottom-btn:hover span:last-child {
+  color: var(--head);
+  transform: translateX(-2px);
+}
+
+.pdetail-back-bottom-btn:active {
+  transform: scale(0.97);
 }
 
 /* Responsive */
