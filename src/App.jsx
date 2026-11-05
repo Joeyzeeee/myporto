@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, useEffect } from 'react'
+import { useLayoutEffect, useRef, useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -75,12 +75,12 @@ const go = (e) => {
 
 function ProjectDetailPage({ project, onBack, isReduced }) {
   const pageRef = useRef(null)
+  const isClosingRef = useRef(false)
   const detail = project?.detail
   if (!detail) return null
 
-  // Scroll ke paling atas saat halaman studi kasus terbuka
+  // Scroll isi halaman detail ke paling atas saat dibuka (tanpa mengubah scroll window utama)
   useEffect(() => {
-    window.scrollTo(0, 0)
     if (pageRef.current) {
       pageRef.current.scrollTop = 0
     }
@@ -93,11 +93,63 @@ function ProjectDetailPage({ project, onBack, isReduced }) {
     if (!el) return
 
     gsap.fromTo(
+      el,
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }
+    )
+
+    gsap.fromTo(
       el.querySelectorAll('.pdetail-anim'),
-      { opacity: 0, y: 22 },
-      { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' }
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.55, stagger: 0.06, ease: 'power2.out' }
     )
   }, [isReduced, project])
+
+  // Animasi keluar keren saat kembali ke portofolio
+  const triggerClose = useCallback(() => {
+    if (isClosingRef.current) return
+    isClosingRef.current = true
+
+    if (isReduced) {
+      onBack()
+      return
+    }
+
+    const el = pageRef.current
+    if (!el) {
+      onBack()
+      return
+    }
+
+    // Animasi panah tombol: meluncur ke kiri dengan pantulan halus
+    const icons = el.querySelectorAll('.pdetail-back-icon')
+    if (icons.length) {
+      gsap.to(icons, { x: -8, duration: 0.2, ease: 'power2.out' })
+    }
+
+    // Timeline animasi keluar yang halus & elegan
+    const tl = gsap.timeline({
+      onComplete: () => {
+        onBack()
+      },
+    })
+
+    tl.to(el.querySelectorAll('.pdetail-nav, .pdetail-content'), {
+      opacity: 0,
+      y: 22,
+      duration: 0.3,
+      ease: 'power3.in',
+    })
+    tl.to(
+      el,
+      {
+        opacity: 0,
+        duration: 0.22,
+        ease: 'power2.inOut',
+      },
+      '-=0.12'
+    )
+  }, [isReduced, onBack])
 
   // Daftarkan link & tombol di halaman detail ke efek kursor .cur
   useEffect(() => {
@@ -125,29 +177,36 @@ function ProjectDetailPage({ project, onBack, isReduced }) {
     }
   }, [project])
 
-  // Tombol Escape untuk kembali
+  // Tombol Escape untuk kembali dengan animasi yang sama
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault()
-        onBack()
+        triggerClose()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onBack])
+  }, [triggerClose])
 
   return (
     <div className="pdetail-page" ref={pageRef} tabIndex={-1} data-lenis-prevent="true">
       {/* Top Bar Navigation */}
       <nav className="pdetail-nav">
         <div className="pdetail-wrap pdetail-nav-inner">
-          <button type="button" className="pdetail-back-btn" onClick={onBack} aria-label="Kembali ke Portofolio">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-            <span>Kembali ke Portofolio</span>
+          <button
+            type="button"
+            className="pdetail-back-btn"
+            onClick={triggerClose}
+            aria-label="Kembali ke Portofolio"
+          >
+            <span className="pdetail-back-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+            </span>
+            <span className="pdetail-back-text">Kembali ke Portofolio</span>
           </button>
           <a
             className="pdetail-nav-github"
@@ -260,8 +319,14 @@ function ProjectDetailPage({ project, onBack, isReduced }) {
 
         {/* Bottom Return Button */}
         <div className="pdetail-bottom pdetail-anim">
-          <button type="button" className="pdetail-back-bottom-btn" onClick={onBack}>
-            ← Kembali ke Portofolio
+          <button type="button" className="pdetail-back-bottom-btn" onClick={triggerClose}>
+            <span className="pdetail-back-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+            </span>
+            <span>Kembali ke Portofolio</span>
           </button>
         </div>
       </article>
@@ -273,13 +338,43 @@ export default function App() {
   const root = useRef(null)
   const photoRef = useRef(null)
   const openerRef = useRef(null)
+  const savedScrollRef = useRef(null)
   const [selectedProject, setSelectedProject] = useState(null)
   const [force, setForce] = useState(false)
   const [imgError, setImgError] = useState(false)
   const reduced = false
 
+  const getProjectScrollPosition = (proj) => {
+    // 1. Jika ada scroll posisi tersimpan saat user mengklik card proyek:
+    if (savedScrollRef.current != null && savedScrollRef.current > 0) {
+      return savedScrollRef.current
+    }
+    // 2. Jika tidak ada (misal direct URL visit), hitung posisi card di horizontal slider
+    const st = ScrollTrigger.getById('proyek-pin')
+    if (!st) {
+      const el = document.getElementById('proyek')
+      return el ? el.offsetTop : 0
+    }
+    if (!proj) return st.start
+
+    const card = document.querySelector(`[data-project-no="${proj.no}"]`)
+    const track = document.querySelector('.hz-track')
+    if (card && track) {
+      const dist = track.scrollWidth - window.innerWidth
+      if (dist > 0) {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2
+        const targetScrollX = Math.max(0, Math.min(dist, cardCenter - window.innerWidth / 2))
+        const progress = targetScrollX / dist
+        return st.start + progress * (st.end - st.start)
+      }
+    }
+    return st.start
+  }
+
   const handleOpenDetail = (p, openerEl) => {
     openerRef.current = openerEl || document.activeElement
+    // Simpan posisi scroll sebelum halaman detail dibuka
+    savedScrollRef.current = window.__lenis ? window.__lenis.scroll : window.scrollY
     setSelectedProject(p)
     if (window.__lenis) {
       window.__lenis.stop()
@@ -291,14 +386,23 @@ export default function App() {
   }
 
   const handleBack = () => {
+    const proj = selectedProject
     setSelectedProject(null)
     if (window.__lenis) {
       window.__lenis.start()
     }
     if (window.location.hash.startsWith('#/proyek/')) {
-      window.history.pushState(null, '', '#proyek')
+      window.history.replaceState(null, '', '#proyek')
     }
-    setTimeout(() => {
+
+    const targetScroll = getProjectScrollPosition(proj)
+    const restoreScroll = () => {
+      if (window.__lenis) {
+        window.__lenis.scrollTo(targetScroll, { immediate: true })
+      } else {
+        window.scrollTo({ top: targetScroll, behavior: 'instant' })
+      }
+      ScrollTrigger.refresh()
       try {
         openerRef.current?.focus?.({ preventScroll: true })
       } catch {
@@ -306,7 +410,11 @@ export default function App() {
       }
       const hz = document.querySelector('.hz')
       if (hz && hz.scrollLeft !== 0) hz.scrollLeft = 0
-    }, 60)
+    }
+
+    restoreScroll()
+    requestAnimationFrame(restoreScroll)
+    setTimeout(restoreScroll, 50)
   }
 
   // Sinkronisasi navigasi URL hash (tombol back/forward browser & direct link)
@@ -319,12 +427,30 @@ export default function App() {
           (p) => p.detail && p.title.toLowerCase().replace(/\s+/g, '-') === slug
         )
         if (found) {
+          savedScrollRef.current = window.__lenis ? window.__lenis.scroll : window.scrollY
           setSelectedProject(found)
           window.__lenis?.stop()
         }
       } else {
-        setSelectedProject(null)
-        window.__lenis?.start()
+        setSelectedProject((prev) => {
+          if (prev) {
+            if (window.__lenis) {
+              window.__lenis.start()
+            }
+            const target = getProjectScrollPosition(prev)
+            const restore = () => {
+              if (window.__lenis) {
+                window.__lenis.scrollTo(target, { immediate: true })
+              } else {
+                window.scrollTo({ top: target, behavior: 'instant' })
+              }
+              ScrollTrigger.refresh()
+            }
+            restore()
+            requestAnimationFrame(restore)
+          }
+          return null
+        })
       }
     }
 
@@ -663,7 +789,7 @@ export default function App() {
               <p className="hint">Scroll untuk melihat →</p>
             </div>
             {projects.map((p) => (
-              <article className="hz-panel" key={p.no}>
+              <article className="hz-panel" key={p.no} data-project-no={p.no}>
                 <span className="hz-no">{p.no}</span>
                 <h3>{p.title}</h3>
                 <p className="tag">{p.tag} · {p.year}</p>

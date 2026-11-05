@@ -50,6 +50,36 @@ export const projects = [
       },
     },
   },
+  {
+    no: '03',
+    title: 'Portal Lab MMT',
+    tag: 'Project Manager · Fullstack',
+    year: '2025',
+    desc: 'Portal web dan CMS Laboratorium Multimedia & Mobile Tech Polinema untuk mengintegrasikan publikasi karya mahasiswa serta dokumentasi lab, lengkap dengan Black Box Testing.',
+    stack: ['PHP', 'Bootstrap', 'PostgreSQL', 'JavaScript'],
+    link: 'https://github.com/Joeyzeeee',
+    detail: {
+      statement: 'Portal web terintegrasi dan CMS untuk publikasi karya mahasiswa serta dokumentasi kegiatan Laboratorium Multimedia & Mobile Tech.',
+      about: 'Portal web untuk Laboratorium Multimedia dan Mobile Tech (MMT) Jurusan Teknologi Informasi Politeknik Negeri Malang. Sistem ini terbagi menjadi dua bagian: Laman publik (profil lab, visi misi, struktur organisasi, karya mahasiswa, berita dan kegiatan, serta galeri foto dan video) dan Dashboard admin CMS (login, logout, lupa password, CRUD semua konten, dan upload media tanpa perlu menyentuh kode).',
+      problem: 'Latar belakang pembuatan portal ini adalah publikasi karya mahasiswa dan dokumentasi kegiatan lab sebelumnya masih tersebar dan belum terintegrasi. Proyek ini dikerjakan oleh tim 5 orang dengan metode Waterfall dan diseminasikan pada 16 Desember 2025, dengan hasil Black Box Testing menyatakan seluruh fitur utama berjalan sesuai skenario.',
+      role: {
+        badge: 'Project Manager & Fullstack Developer',
+        items: [
+          'Mengoordinasikan tim 5 orang, menyusun dan mengontrol jadwal dengan metode Waterfall',
+          'Merancang UI/UX dan struktur database PostgreSQL untuk halaman Karya',
+          'Mengembangkan sisi Frontend dan Backend (PHP procedural & Bootstrap) untuk modul Karya',
+          'Mengintegrasikan fitur karya mahasiswa dengan dashboard admin (CMS)',
+          'Melakukan pengujian fitur (Black Box Testing) dan ikut menyusun laporan akhir diseminasi',
+        ],
+      },
+      stack: [
+        'PHP (Procedural)', 'HTML', 'CSS', 'JavaScript', 'Bootstrap', 'PostgreSQL', 'Laragon / XAMPP', 'GitHub',
+      ],
+      links: {
+        github: 'https://github.com/Joeyzeeee',
+      },
+    },
+  },
 ]
 
 // TAMBAH PENGALAMAN: salin satu blok { ... }
